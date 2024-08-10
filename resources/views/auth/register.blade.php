@@ -13,13 +13,13 @@
   <!--  Body Wrapper -->
   <div class="page-wrapper" id="main-wrapper" data-layout="vertical" data-navbarbg="skin6" data-sidebartype="full"
     data-sidebar-position="fixed" data-header-position="fixed">
-    @if (session('success') )
+    @if (session('success'))
     <div class="alert alert-success" role="alert">
-        A simple success alert—check it out!
+        {{ session('success') }}
       </div>
-      @elseif (session('error'))
-      <div class="alert alert-danger" role="alert">
-        A simple danger alert—check it out!
+    @elseif (session('error'))
+    <div class="alert alert-warning" role="alert">
+        {{ session('error') }}
       </div>
     @endif
     <div

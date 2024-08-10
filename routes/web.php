@@ -2,16 +2,20 @@
 
 use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\BooksController;
+use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\ReaderController;
 use App\Http\Controllers\UserController;
-use App\Http\Middleware\EnsureHasRole;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/', function () {
-    return view('welcome')->name('home');
+Route::controller(ReaderController::class)->group(function(){
+    Route::get('/','index')->name('homepage');
+    Route::get('/book/{id}','show')->name('book.detail');
+    Route::post('/send_request','send_request')->name('request_book');
+    Route::get('/view-pdf/{id}',  'viewPdf')->name('viewPdf');
 });
 
 Route::middleware('guest')->group(function () {
-
     Route::controller(AuthController::class)->group(function () {
         Route::get('/login', 'login')->name('login');
         Route::get('/register', 'register')->name('register');
@@ -20,10 +24,22 @@ Route::middleware('guest')->group(function () {
     });
 });
 
-Route::middleware('auth')->group(function () {
+Route::middleware(['auth'])->group(function(){
+    Route::post('logout', [AuthController::class, 'logout'])->name('logout');
+});
+
+
+Route::middleware(['auth', 'role:admin,librarian'])->group(function () {
 
     Route::controller(AdminController::class)->group(function () {
-        Route::get('/admin/dashboard', 'dashboard')->name('dashboard');
+        Route::get('/dashboard', 'dashboard')->name('dashboard');
+        Route::get('/permissions', 'permissions')->name('permissions');
+        Route::patch('/permissions_update/{id}/{action}','updateStatusPermissions')
+        ->where('action', 'accept|decline')
+        ->name('permissions_updateStatus');
     });
+
     Route::resource('/users', UserController::class);
+    Route::resource('/category', CategoryController::class);
+    Route::resource('/books', BooksController::class);
 });

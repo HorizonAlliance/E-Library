@@ -3,15 +3,18 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use Exception;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Log;
 
 class AuthController extends Controller
 {
-    public function login() : View    {
+    public function login(): View
+    {
         return view('auth.login');
     }
 
@@ -28,13 +31,11 @@ class AuthController extends Controller
             'address' => 'required|string',
             'email' => 'required|email|unique:users',
             'password' => 'required|min:8',
-            // 'role' => '',
-            // 'avatar' => '',
         ]);
 
-        if($request->file('avatar')){
+        if ($request->file('avatar')) {
             $avatar = $request->file('avatar');
-            $avatar->storeAs('public/avatars',$avatar->hashName());
+            $avatar->storeAs('public/avatars', $avatar->hashName());
 
             User::create([
                 'username' => $request->username,
@@ -42,10 +43,9 @@ class AuthController extends Controller
                 'address' => $request->address,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                // 'role' => ,
                 'avatar' => $request->avatar,
             ]);
-            return redirect()->route('login')->with('success','anjing iso cok');
+            return redirect()->route('login')->with('success', 'Register Success');
         } else {
             User::create([
                 'username' => $request->username,
@@ -53,42 +53,46 @@ class AuthController extends Controller
                 'address' => $request->address,
                 'email' => $request->email,
                 'password' => Hash::make($request->password),
-                // 'role' => ,
             ]);
-            return redirect()->route('login')->with('success','anjing iso cok');
+            return redirect()->route('login')->with('success', 'Register Success');
         }
-        return redirect()->route('login')->with('success','anjing iso cok');
     }
 
-    public function login_action(Request $request) : RedirectResponse
+    public function login_action(Request $request): RedirectResponse
     {
         $request->validate([
             'email' => 'required|email',
             'password' => 'required|min:8'
         ]);
 
-        if(Auth::attempt($request->only('email','password'))){
+        if (Auth::attempt($request->only('email', 'password'))) {
             $role = Auth::user()->role;
             switch ($role) {
                 case 'admin':
-                    return redirect()->route('dashboard');
                 case 'librarian':
                     return redirect()->route('dashboard');
                 case 'reader':
-                    return redirect()->route('home');
+                    return redirect()->route('homepage');
                 default:
-                    return redirect()->back()->with('error','role  invalid');
+                    return redirect()->back()->with('error', 'Invalid role assigned');
             }
         }
-        return redirect()->route('login')->with('error','login failed');
+        return redirect()->route('login')->with('error', 'login failed');
     }
 
     public function logout(Request $request): RedirectResponse
     {
-        Auth::logout();
-        $request->session()->invalidate();
-        $request->session()->regenerateToken();
+        Log::info('Logout method called');
+        try {
+            //code...
+            Auth::logout();
+            $request->session()->invalidate();
+            $request->session()->regenerateToken();
 
-        return redirect()->route('home')->with('success','logout successfully');
+            Log::info('User logged out');
+            return redirect()->route('homepage')->with('success', 'Logout successfully');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', $e);
+        }
     }
 }
