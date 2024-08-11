@@ -9,6 +9,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
+use setasign\Fpdi\FpdfTpl;
+use setasign\Fpdi\Tfpdf\Fpdi;
 
 class ReaderController extends Controller
 {
@@ -17,35 +19,34 @@ class ReaderController extends Controller
         $books = books::latest()->paginate(10);
 
         if (Auth::check()) {
-            $user = Auth::user();
-            $permissions = permissions::where('user_id', $user->id)->first();
+            $userId = Auth::user()->id;
+            $permissions = permissions::where('user_id', $userId)->get();
+            // dd($userId);
         } else {
-            $permissions = null; // Use null instead of an empty collection
+            $permissions = null;
         }
+        // dd($permissions);
 
         return view('homepage', compact('books', 'permissions'));
     }
 
-    public function show( $id) : View
-    {
-        // dd("ID received: " . $id);
-        $book = books::findOrFail($id);
-        // dd($book);
-        $permissions = permissions::findOrFail($id);
-        return view('bookcuy', compact('book','permissions'));
-    }
+    // public function show( $id) : View
+    // {
+    //     // dd("ID received: " . $id);
+    //     $book = books::findOrFail($id);
+    //     // dd($book);
+    //     $permissions = permissions::findOrFail($id);
+    //     return view('bookcuy', compact('book','permissions'));
+    // }
 
     public function send_request(Request $request) : RedirectResponse
     {
-        $anjing = $request->validate([
+        $request->validate([
             'book_id' => 'required|integer',
         ]);
 
         if(Auth::check()){
             $user = Auth::user();
-            $book = books::find($request->book_id);
-            $readDuration = $book->read_duration;
-            $expirated = now()->addDays($readDuration);
             $existingPermissions = permissions::where('user_id',$user->id)->where('book_id',$request->book_id)->first();
 
             if($existingPermissions){
@@ -55,8 +56,6 @@ class ReaderController extends Controller
                 'user_id' => $user->id,
                 'book_id' => $request->book_id,
                 'status' => 'proces',
-                'expirated' => $expirated,
-
             ]);
             return redirect()->route('homepage')->with('success','Request Submited');
         }
@@ -75,4 +74,10 @@ class ReaderController extends Controller
 
         return view('pdf_viewer', compact('book'));
     }
+
+
+    // public function review(): RedirectResponse
+    // {
+
+    // }
 }

@@ -22,17 +22,22 @@
                         <p class="card-text">Release date : {{ $book->publisher }}</p>
                         <p class="card-text">Category : {{ $book->category['name'] }}</p>
                         <p class="card-text">Read Duration : {{ $book->read_duration }} days</p>
-
-                        @if ($permissions->book_id == $book->id)
-                            @if ($permissions->status == 'proces')
+                        @php
+                        $permission = null;
+                        if (!is_null($permissions)) {
+                            $permission = $permissions->firstWhere('book_id', $book->id);
+                        }
+                        @endphp
+                        @if ($permission)
+                            @if ($permission->status == 'proces')
                                 <label class="btn btn-primary" for="">In Process</label>
-                            @elseif($permissions->status == 'accept')
-                            <button class="btn btn-primary" type="button" onclick="window.location.href='{{ route('viewPdf', ['id' => $permissions->id]) }}'">
+                            @elseif($permission->status == 'accept')
+                            <button class="btn btn-primary" type="button" onclick="window.location.href='{{ route('viewPdf', ['id' => $permission->id]) }}'">
                                 Approved, ReadNow
                             </button>
-                            @elseif($permissions->status == 'decline')
+                            @elseif($permission->status == 'decline')
                                 <label class="btn btn-danger" for="">Rejected</label>
-                            @elseif($permissions->status == 'expirated')
+                            @elseif($permission->status == 'expirated')
                                 <label class="btn btn-warning" for="">Expirated</label>
                             @else
                                 <label class="btn btn-info" for="">Unkn own Status</label>

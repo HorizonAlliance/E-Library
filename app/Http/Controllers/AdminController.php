@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\books;
 use App\Models\permissions;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
@@ -30,7 +31,9 @@ class AdminController extends Controller
         ]);
         $permissions = permissions::findOrFail($id);
         $user = Auth::user()->username;
-
+        $book = books::find($permissions->book_id);
+        $readDuration = $book->read_duration;
+        $expiratedPermit = now()->addDays($readDuration);
         if($action !== 'accept' && $action !== 'decline'){
             return redirect()->back()->with('error', 'Invalid action');
         }
@@ -43,6 +46,7 @@ class AdminController extends Controller
             if($action == 'accept'){
                 $permissions->status = $action;
                 $permissions->librarian = $user;
+                $permissions->expirated = $expiratedPermit;
                 $permissions->save();
             } else {
                 $permissions->status = $action;

@@ -58,26 +58,63 @@ class AuthController extends Controller
         }
     }
 
+    // public function login_action(Request $request): RedirectResponse
+    // {
+
+    //     $request->validate([
+    //         'email' => 'required|email',
+    //         'password' => 'required|min:8'
+    //     ]);
+
+    //     if (Auth::attempt($request->only('email', 'password'))) {
+    //         $role = Auth::user()->role;
+    //         switch ($role) {
+    //             case 'admin':
+    //             case 'librarian':
+    //                 return redirect()->route('dashboard');
+    //             case 'reader':
+    //                 return redirect()->route('homepage');
+    //             default:
+    //                 return redirect()->back()->with('error', 'Invalid role assigned');
+    //         }
+    //     }
+    //     return redirect()->route('login')->with('error', 'login failed');
+    // }
+
     public function login_action(Request $request): RedirectResponse
     {
         $request->validate([
-            'email' => 'required|email',
-            'password' => 'required|min:8'
+            'email' => ['required', 'email'],
+            'password' => ['required','min:8']
         ]);
 
-        if (Auth::attempt($request->only('email', 'password'))) {
-            $role = Auth::user()->role;
+        $user = User::where('email',$request->email)->first();
+
+        if($user && Hash::check($request->password,$user->password)){
+            Auth::login($user);
+
+            // session([
+            //     'user_id' => $request->user_id,
+            //     'email' => $request->email,
+            //     'username' => $request->username,
+            //     'name' => $request->name,
+            //     'address' => $request->address,
+            //     'role' => $request->role,
+            //     'avatar' => $request->avatar,
+            // ]);
+
+            $role = $user->role;
             switch ($role) {
                 case 'admin':
                 case 'librarian':
-                    return redirect()->route('dashboard');
-                case 'reader':
-                    return redirect()->route('homepage');
+                    return redirect()->route('dashboard')->with('success','login successfully');
+                case 'reader' :
+                    return redirect()->route('homepage')->with('success','login successfully');
                 default:
-                    return redirect()->back()->with('error', 'Invalid role assigned');
+                    return redirect()->back()->with('error','login failed');
             }
         }
-        return redirect()->route('login')->with('error', 'login failed');
+        return redirect()->back()->with('error','login failed');
     }
 
     public function logout(Request $request): RedirectResponse
@@ -87,6 +124,7 @@ class AuthController extends Controller
             //code...
             Auth::logout();
             $request->session()->invalidate();
+            $request->session()->flush();
             $request->session()->regenerateToken();
 
             Log::info('User logged out');

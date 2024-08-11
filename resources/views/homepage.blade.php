@@ -9,7 +9,13 @@
                             <h5 class="text-white text-uppercase mb-3 animated slideInDown">Digital Library</h5>
                             <h1 class="display-1 text-white mb-md-4 animated zoomIn">increase your knowledge</h1>
                             <a href=""
-                                class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Get Started</a>
+                                class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">
+                                @guest
+                                    Welcome....
+                                @else
+                                    Welcome {{auth()->user()->username}}
+                                @endguest
+                            </a>
                         </div>
                     </div>
                 </div>
@@ -19,10 +25,14 @@
                         <div class="p-3" style="max-width: 900px;">
                             <h5 class="text-white text-uppercase mb-3 animated slideInDown">Digital Library</h5>
                             <h1 class="display-1 text-white mb-md-4 animated zoomIn">Your library, now in your hands</h1>
-                            <a href="{{ asset('frontend/') }}quote.html"
-                                class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">Free Quote</a>
-                            <a href="{{ asset('frontend/') }}"
-                                class="btn btn-outline-light py-md-3 px-md-5 animated slideInRight">Contact Us</a>
+                            <a href=""
+                            class="btn btn-primary py-md-3 px-md-5 me-3 animated slideInLeft">
+                            @guest
+                                Welcome....
+                            @else
+                                Welcome {{auth()->user()->username}}
+                            @endguest
+                        </a>
                         </div>
                     </div>
                 </div>
