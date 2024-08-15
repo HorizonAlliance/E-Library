@@ -56,9 +56,9 @@ class User extends Authenticatable
         return $this->hasMany(collections::class);
     }
 
-    function reviews(): HasMany
+    function reviews(): BelongsTo
     {
-        return $this->hasMany(reviews::class);
+        return $this->belongsTo(reviews::class);
     }
 
     function permissions(): HasMany

@@ -14,11 +14,11 @@ class reviews extends Model
         'user_id','book_id','ulasan','rating'
     ];
 
-    function users():BelongsTo
+    function user():BelongsTo
     {
         return $this->belongsTo(User::class);
     }
-    function books():BelongsTo
+    function book():BelongsTo
     {
         return $this->belongsTo(books::class);
     }

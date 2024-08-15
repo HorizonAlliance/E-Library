@@ -23,8 +23,4 @@ class permissions extends Model
     {
         return $this->belongsTo(books::class);
     }
-    // public function books(): HasMany
-    // {
-    //     return $this->hasMany(books::class);
-    // }
 }

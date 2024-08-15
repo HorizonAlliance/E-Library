@@ -77,6 +77,35 @@ h6,
     font-weight: 600 !important;
 }
 
+.synopsis {
+    max-width: 600px; /* Contoh lebar maksimal */
+    word-wrap: break-word; /* Membungkus teks yang panjang */
+    overflow-wrap: break-word; /* Alternatif untuk word-wrap, tergantung browser */
+    white-space: normal; /* Membolehkan teks membungkus */
+}
+
+.rating {
+    display: flex;
+    flex-direction: row-reverse;
+    justify-content: center;
+}
+
+.rating input {
+    display: none;
+}
+
+.rating label {
+    font-size: 2em;
+    color: #ddd;
+    cursor: pointer;
+}
+
+.rating input:checked ~ label,
+.rating label:hover,
+.rating label:hover ~ label {
+    color: #f5c518;
+}
+
 
 /*** Button ***/
 .btn {
@@ -182,7 +211,7 @@ h6,
         border-bottom: 1px solid rgba(256, 256, 256, .1);
         z-index: 999;
     }
-    
+
     .sticky-top.navbar-dark {
         position: fixed;
         background: #FFFFFF;

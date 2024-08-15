@@ -10,9 +10,12 @@ use Illuminate\Support\Facades\Route;
 
 Route::controller(ReaderController::class)->group(function(){
     Route::get('/','index')->name('homepage');
-    Route::get('/book/{id}','show')->name('book.detail');
+    Route::get('/book_detail/{id}','show')->name('book_detail');
     Route::post('/send_request','send_request')->name('request_book');
     Route::get('/view-pdf/{id}',  'viewPdf')->name('viewPdf');
+    Route::get('/collections','collections')->name('collections');
+    Route::post('/addCollect','addCollect')->name('addCollect');
+    Route::post('/addReview','addReview')->name('addReview');
 });
 
 Route::middleware('guest')->group(function () {

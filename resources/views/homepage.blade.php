@@ -48,6 +48,47 @@
                 <span class="visually-hidden">Next</span>
             </button>
         </div>
+        <div class="container-fluid facts py-5 pt-lg-0">
+            <div class="container py-5 pt-lg-0">
+                <div class="row gx-0">
+                    <div class="col-lg-4 wow zoomIn" data-wow-delay="0.1s" style="visibility: visible; animation-delay: 0.1s; animation-name: zoomIn;">
+                        <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-users text-primary"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-white mb-0">Member</h5>
+                                <h1 class="text-white mb-0" data-toggle="counter-up">{{$userCount}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 wow zoomIn" data-wow-delay="0.3s" style="visibility: visible; animation-delay: 0.3s; animation-name: zoomIn;">
+                        <div class="bg-light shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-primary d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-book text-white"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-primary mb-0">Books</h5>
+                                <h1 class="mb-0" data-toggle="counter-up">{{$booksCount}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="col-lg-4 wow zoomIn" data-wow-delay="0.6s" style="visibility: visible; animation-delay: 0.6s; animation-name: zoomIn;">
+                        <div class="bg-primary shadow d-flex align-items-center justify-content-center p-4" style="height: 150px;">
+                            <div class="bg-white d-flex align-items-center justify-content-center rounded mb-2" style="width: 60px; height: 60px;">
+                                <i class="fa fa-check text-primary"></i>
+                            </div>
+                            <div class="ps-4">
+                                <h5 class="text-white mb-0">Request Books</h5>
+                                <h1 class="text-white mb-0" data-toggle="counter-up">{{$requestCount}}</h1>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        {{-- list book --}}
     <div class="container-fluid py-5 wow fadeInUp" data-wow-delay="0.1s"
         style="visibility: visible; animation-delay: 0.1s; animation-name: fadeInUp;">
         <div class="container py-5">
@@ -57,7 +98,7 @@
                 <div class="col-lg-12">
                     <div class="row g-5">
                         @forelse ($books as $book)
-                            <div class="col-md-4 wow slideInUp" data-wow-delay="0.1s"
+                            <div class="col-md-4 col-sm-6 wow slideInUp" data-wow-delay="0.1s"
                                 style="visibility: visible; animation-delay: 0.1s; animation-name: slideInUp;">
                                 <div class="blog-item bg-light rounded overflow-hidden">
                                     <div class="blog-img position-relative overflow-hidden">
@@ -74,8 +115,18 @@
                                                     class="far fa-calendar-alt text-primary me-2"></i>{{ date('d:m:Y', strtotime($book->release_date)) }}</small>
                                         </div>
                                         <h4 class="mb-3">{{ $book->title }}</h4>
-                                        <p>{{ $book->synopsis }}</p>
-                                        @include('partials.modal_book',['book' => $book, 'permissions' => $permissions])
+                                        <p class="mb-4">{{ $book->synopsis }}</p>
+                                        <div class="d-flex mb-3">
+                                            {{-- @include('partials.modal_book',['book' => $book, 'permissions' => $permissions]) --}}
+                                        <form action="{{route('addCollect')}}" method="POST">
+                                            @csrf
+                                            <input type="hidden" name="book_id" value="{{$book->id}}">
+                                            <button type="submit" class="btn btn-warning"> + AddToCollect</button>
+                                        </form>
+                                        <a href="{{route('book_detail',$book->id)}}">
+                                            <button class="btn btn-info">Read More</button>
+                                        </a>
+                                    </div>
                                     </div>
                                 </div>
                             </div>

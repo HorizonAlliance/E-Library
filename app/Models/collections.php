@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 
 class collections extends Model
@@ -14,13 +15,13 @@ class collections extends Model
         'book_id','user_id'
     ];
 
-    function books():HasMany
+    public function user(): BelongsTo
     {
-        return $this->hasMany(books::class);
+        return $this->belongsTo(User::class);
     }
 
-    function users():HasMany
+    public function book(): BelongsTo
     {
-        return $this->hasMany(User::class);
+        return $this->belongsTo(books::class);
     }
 }
