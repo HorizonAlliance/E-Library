@@ -69,7 +69,9 @@
                                     </div>
                                     <h4 class="mb-3">{{ $collect->book->title }}</h4>
                                     <p>{{ $collect->book->synopsis }}</p>
-                                    @include('partials.modal_book',['book' => $collect->book, 'permissions' => $permissions])
+                                    <a href="{{route('book_detail',$collect->book->id)}}">
+                                        <button class="btn btn-info">Read More</button>
+                                    </a>
                                 </div>
                             </div>
                         </div>

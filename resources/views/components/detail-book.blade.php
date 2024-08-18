@@ -7,13 +7,12 @@
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="card-body">
-                    <h5 class="card-title">{{ $book->title }}</h5>
+                    <h5 class="card-title text-2xl">Title : {{ $book->title }}</h5>
                     <h6 class="card-subtitle mb-2 text-muted">Author : {{ $book->author }}</h6>
                     <h6 class="card-subtitle mb-2 text-muted">publisher : {{ $book->publisher }}</h6>
                     <h6 class="card-subtitle mb-2 text-muted">category : {{ $book->category['name'] }}</h6>
                     <p class="card-text">{{ $book->synopsis }}</p>
-                    <a href="#" class="card-link">Read</a>
-                    <a href="#" class="btn btn-success-outline">Request Permissions</a>
+                    <a href="#" class="card-link">Read Review</a>
                 </div>
             </div>
         </div>

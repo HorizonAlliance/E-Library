@@ -140,4 +140,10 @@ class BooksController extends Controller
         $book->delete();
         return redirect()->back()->with('success', 'Delete book success');
     }
+
+
+    // public function generatePDF() : RedirectResponse
+    // {
+    //     $pdf = PDF::loadView('');
+    // }
 }

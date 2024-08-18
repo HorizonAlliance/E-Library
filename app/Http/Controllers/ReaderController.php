@@ -28,7 +28,6 @@ class ReaderController extends Controller
         } else {
             $permissions = null;
         }
-        // dd($permissions);
 
         return view('homepage', compact('books', 'permissions','userCount','booksCount','requestCount'));
     }
@@ -38,13 +37,14 @@ class ReaderController extends Controller
         $book = books::find($id);
         $permission = null;
         $reviews = reviews::where('book_id',$id)->get();
-        // dd($reviews);
         if (Auth::check()) {
             $user_id = Auth::user()->id;
             $permission = permissions::where('book_id',$id)->where('user_id',$user_id)->first();
         }
-        // foreach($reviews as $review){
-        //     dd($review->user->name);
+        // if ($book->Review) {
+        //     $rata2 = $book->Review->rating;
+        // } else {
+        //     dd('No review found for this book.');
         // }
         // dd($permission);
         return view('detail', compact('book','permission','reviews'));

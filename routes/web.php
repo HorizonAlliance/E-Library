@@ -4,6 +4,7 @@ use App\Http\Controllers\AdminController;
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\BooksController;
 use App\Http\Controllers\CategoryController;
+use App\Http\Controllers\PdfController;
 use App\Http\Controllers\ReaderController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
@@ -40,6 +41,9 @@ Route::middleware(['auth', 'role:admin,librarian'])->group(function () {
         Route::patch('/permissions_update/{id}/{action}','updateStatusPermissions')
         ->where('action', 'accept|decline')
         ->name('permissions_updateStatus');
+    });
+    Route::controller(PdfController::class)->group(function(){
+        Route::get('/books_pdf','booksPdf')->name('books_pdf');
     });
 
     Route::resource('/users', UserController::class);
