@@ -9,14 +9,11 @@
             </button>
             <div class="collapse navbar-collapse" id="navbarCollapse">
                 <div class="navbar-nav ms-auto py-0">
-                    <a href="{{route('homepage')}}" class="nav-item nav-link active">Home</a>
-                    {{-- <div class="nav-item dropdown">
-                        <a href="#" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Book Request</a>
-                        <div class="dropdown-menu m-0">
-                            <a href="blog.html" class="dropdown-item">book approved</a>
-                            <a href="detail.html" class="dropdown-item">finished reading</a>
-                        </div>
-                    </div> --}}
+                    @php
+                        $currentRoute = Route::currentRouteName();
+                    @endphp
+                    <a href="{{ route('homepage') }}" class="nav-item nav-link {{ $currentRoute == 'homepage' ? 'active' : '' }}">Home</a>
+                    <a href="{{ route('bookSuggestions') }}" class="nav-item nav-link {{ $currentRoute == 'bookSuggestions' ? 'active' : '' }}">Book Request</a>
                     <div class="nav-item dropdown">
                         <a href="" class="nav-link dropdown-toggle" data-bs-toggle="dropdown">Collections</a>
                         <div class="dropdown-menu m-0">

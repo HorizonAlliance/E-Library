@@ -14,7 +14,7 @@
             <div class="row">
                 @foreach ($books as $book)
                     <div class="col-md-4">
-                        <h5 class="card-title fw-semibold mb-4">{{ $book->Review->avg('rating') }}</h5>
+                        <h5 class="card-title fw-semibold mb-4">{{ $book->title}}</h5>
                         <div class="card">
                             <img src="{{ asset('storage/' . $book->cover) }}" class="card-img-top" alt="...">
                             <div class="card-body">

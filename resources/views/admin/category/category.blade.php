@@ -34,15 +34,17 @@
                                         </td>
                                         <td class="border-bottom-0">
                                             <h6 class="fw-semibold mb-0 fs-4">
-                                                <a href="{{ route('category.edit', $data->id) }}">
-                                                    <button type="button" class="btn btn-primary m-1">Edit</button>
-                                                </a>
-                                                <form onsubmit="return confirm('apakah lo yakin?')"
+                                                <div class="d-flex">
+                                                    <a href="{{ route('category.edit', $data->id) }}">
+                                                        <button type="button" class="btn btn-warning m-1">Edit</button>
+                                                    </a>
+                                                    <form onsubmit="return confirm('apakah lo yakin?')"
                                                     action="{{ route('category.destroy', $data->id) }}" method="POST">
                                                     @csrf
                                                     @method('DELETE')
-                                                    <button type="submit" class="btn btn-primary m-1">Delete</button>
+                                                    <button type="submit" class="btn btn-danger m-1">Delete</button>
                                                 </form>
+                                                </div>
                                             </h6>
                                         </td>
                                     </tr>

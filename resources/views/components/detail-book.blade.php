@@ -12,7 +12,7 @@
                     <h6 class="card-subtitle mb-2 text-muted">publisher : {{ $book->publisher }}</h6>
                     <h6 class="card-subtitle mb-2 text-muted">category : {{ $book->category['name'] }}</h6>
                     <p class="card-text">{{ $book->synopsis }}</p>
-                    <a href="#" class="card-link">Read Review</a>
+                    <a href="{{route('bookReview',$book->id)}}" class="card-link">Read Review</a>
                 </div>
             </div>
         </div>

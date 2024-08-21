@@ -3,6 +3,8 @@
 namespace App\Http\Controllers;
 
 use App\Models\books;
+use App\Models\BookSuggestions;
+use App\Models\BookSuggestionsLike;
 use App\Models\collections;
 use App\Models\permissions;
 use App\Models\reviews;
@@ -11,7 +13,6 @@ use Carbon\Exceptions\Exception;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
-use Illuminate\Support\Facades\Redirect;
 use Illuminate\View\View;
 
 class ReaderController extends Controller
@@ -156,6 +157,70 @@ class ReaderController extends Controller
             ]);
 
             return redirect()->back()->with('success', 'Book added to your collection.');
+        }
+    }
+
+    public function BookSuggestions() : View | RedirectResponse
+    {
+        // if(!Auth::check()){
+        //     return redirect()->back()->with('error','Login to access book suggestions');
+        // }
+        // $mySuggestions = BookSuggestions::where('user_id',Auth::user()->id)->get();
+        $mostLikedSuggestions = BookSuggestions::withCount('suggestionsLike')->orderBy('suggestions_like_count','desc')->get();
+        return view('book_suggestions',compact('mostLikedSuggestions'));
+    }
+
+    public function addBookSuggestions(Request $request) : RedirectResponse
+    {
+        $request->validate([
+            'title' => 'required|string',
+            'author' => 'string|nullable',
+            'publisher' => 'string|nullable',
+            'description' => 'string|nullable',
+        ]);
+        if (!Auth::check()) {
+            return redirect()->back()->with('error','Login to add book suggestion');
+        }
+        $user_id = Auth::user()->id;
+        try {
+            BookSuggestions::create([
+                'title' => $request->title,
+                'user_id' => $user_id,
+                'author' => $request->author,
+                'publisher' => $request->publisher,
+                'description' => $request->description,
+            ]);
+            return redirect()->back()->with('success','Add Book Suggestion successfully');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error', 'Kesalahan: ' . $e);
+        }
+    }
+
+    public function likeSugestion(Request $request) : RedirectResponse
+    {
+        $request->validate([
+            'suggestions_id' => 'required',
+        ]);
+
+        try {
+            if(!Auth::check()){
+                return redirect()->back()->with('error','Login to like suggestion');
+            }
+            $user_id = Auth::user()->id;
+            $existingUserBookSuggestLike = BookSuggestionsLike::with('bookSuggestions')->whereHas('bookSuggestions', function($query) use ($user_id){
+                $query->whereNot('user_id',$user_id);
+            })->whereNot('user_id',$user_id)->get();
+
+            if($existingUserBookSuggestLike){
+                return redirect()->back()->with('error','you can`t like this');
+            }
+            BookSuggestionsLike::create([
+                'user_id' => $user_id,
+                'suggestions_id' => $request->suggestions_id,
+            ]);
+            return redirect()->back()->with('success','like suggestion');
+        } catch (Exception $e) {
+            return redirect()->back()->with('error','error'. $e);
         }
     }
 

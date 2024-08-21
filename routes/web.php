@@ -17,6 +17,9 @@ Route::controller(ReaderController::class)->group(function(){
     Route::get('/collections','collections')->name('collections');
     Route::post('/addCollect','addCollect')->name('addCollect');
     Route::post('/addReview','addReview')->name('addReview');
+    Route::get('/book_suggestions','BookSuggestions')->name('bookSuggestions');
+    Route::post('/book_suggestions','addBookSuggestions')->name('addBookSuggestions');
+    Route::post('/like_book_suggestions','likeSugestion')->name('likeBookSuggestion');
 });
 
 Route::middleware('guest')->group(function () {
@@ -41,9 +44,12 @@ Route::middleware(['auth', 'role:admin,librarian'])->group(function () {
         Route::patch('/permissions_update/{id}/{action}','updateStatusPermissions')
         ->where('action', 'accept|decline')
         ->name('permissions_updateStatus');
+        Route::get('/suggestions','suggestions')->name('suggestions');
+        Route::get('/review/{id}','review')->name('bookReview');
     });
     Route::controller(PdfController::class)->group(function(){
-        Route::get('/books_pdf','booksPdf')->name('books_pdf');
+        Route::get('/books_generate_pdf','booksPdf')->name('books_pdf');
+        Route::get('/suggest_generate_pdf','suggestBook')->name('suggest_pdf');
     });
 
     Route::resource('/users', UserController::class);

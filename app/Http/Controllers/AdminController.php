@@ -3,7 +3,9 @@
 namespace App\Http\Controllers;
 
 use App\Models\books;
+use App\Models\BookSuggestions;
 use App\Models\permissions;
+use App\Models\reviews;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -59,5 +61,18 @@ class AdminController extends Controller
             return redirect()->back()->with('error', 'Error updating permissions status: '. $e->getMessage());
         }
 
+    }
+
+    public function suggestions() : View
+    {
+        $suggestions = BookSuggestions::with('user','suggestionsLike')->withCount('suggestionsLike')->orderByDesc('suggestions_like_count')->orderByDesc('created_at')->get();
+        // dd($suggestions);
+        return view('admin.bookSuggestion.bookSuggestions',compact('suggestions'));
+    }
+
+    public function review($id) : View
+    {
+        $reviews = reviews::where('book_id',$id)->get();
+        return view('admin.books.reviews',compact('reviews'));
     }
 }

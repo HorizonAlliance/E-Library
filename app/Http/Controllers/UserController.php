@@ -40,7 +40,7 @@ class UserController extends Controller
             if ($request->hasFile('avatar')) {
                 $avatar = $request->file('avatar');
                 $avatar->storeAs('public/avatars', $avatar->hashName());
-
+                // dd($request->all());
                 User::create([
                     'username' => $validatedData['username'],
                     'name' => $validatedData['name'],
@@ -119,6 +119,7 @@ class UserController extends Controller
     public function destroy($id): RedirectResponse
     {
         $user = User::findOrFail($id);
+        // dd($user->avatar);
         Storage::delete('public/avatars/' . $user->avatar);
         $user->delete();
 

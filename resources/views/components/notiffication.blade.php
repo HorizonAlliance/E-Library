@@ -7,7 +7,7 @@
             {{ session('error') }}
         </div>
     @endif
-{{-- 
+{{--
     @props(['type' => null, 'message' => null])
 
     @php
