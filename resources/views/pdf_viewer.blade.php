@@ -8,14 +8,14 @@
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
 </head>
 <body style="margin: 0; padding: 0;">
-    <iframe 
-        src="{{ asset('storage/' . $book->file) }}#toolbar=0&navpanes=0&scrollbar=0" 
-        width="100%" 
-        height="800px" 
+    <iframe
+        src="{{ asset('storage/' . $book->file) }}#toolbar=0&navpanes=0&scrollbar=0"
+        width="100%"
+        height="800px"
         frameborder="0"
-        oncontextmenu="return false" 
-        ondblclick="return false" 
-        onclick="return false" 
+        oncontextmenu="return false"
+        ondblclick="return false"
+        onclick="return false"
         onmousedown="return false">
     </iframe>
 

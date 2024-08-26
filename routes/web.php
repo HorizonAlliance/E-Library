@@ -46,6 +46,7 @@ Route::middleware(['auth', 'role:admin,librarian'])->group(function () {
         ->name('permissions_updateStatus');
         Route::get('/suggestions','suggestions')->name('suggestions');
         Route::get('/review/{id}','review')->name('bookReview');
+        Route::get('/update_my_profile/{id}','updateMyProfile')->name('updateMyProfile');
     });
     Route::controller(PdfController::class)->group(function(){
         Route::get('/books_generate_pdf','booksPdf')->name('books_pdf');

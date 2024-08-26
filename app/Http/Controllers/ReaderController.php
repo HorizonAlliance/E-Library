@@ -15,6 +15,8 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
 
+use function Laravel\Prompts\error;
+
 class ReaderController extends Controller
 {
     public function index(): View
@@ -33,23 +35,32 @@ class ReaderController extends Controller
         return view('homepage', compact('books', 'permissions','userCount','booksCount','requestCount'));
     }
 
-    public function show( $id) : View
+    public function show($id) : View
     {
+        // Ambil data buku berdasarkan ID
         $book = books::find($id);
         $permission = null;
-        $reviews = reviews::where('book_id',$id)->get();
+
+        $reviews = reviews::where('book_id', $id)->paginate(5);
+
         if (Auth::check()) {
             $user_id = Auth::user()->id;
-            $permission = permissions::where('book_id',$id)->where('user_id',$user_id)->first();
+
+            // Ambil izin terbaru yang belum expired, diurutkan berdasarkan created_at
+            $permission = permissions::where('book_id', $id)
+                ->where('user_id', $user_id)
+                ->where(function ($query) {
+                    $query->whereNull('expirated')
+                          ->orWhere('expirated', '>', now());
+                })
+                ->orderBy('created_at', 'desc')
+                ->first();
         }
-        // if ($book->Review) {
-        //     $rata2 = $book->Review->rating;
-        // } else {
-        //     dd('No review found for this book.');
-        // }
-        // dd($permission);
-        return view('detail', compact('book','permission','reviews'));
+
+        // Kembalikan view dengan data buku, izin, dan ulasan
+        return view('detail', compact('book', 'permission', 'reviews'));
     }
+
 
     public function send_request(Request $request) : RedirectResponse
     {
@@ -57,23 +68,39 @@ class ReaderController extends Controller
             'book_id' => 'required|integer',
         ]);
 
-        if(Auth::check()){
+        if (Auth::check()) {
             $user = Auth::user();
-            $existingPermissions = permissions::where('user_id',$user->id)->where('book_id',$request->book_id)->first();
+            $existingPermission = permissions::where('user_id', $user->id)
+                ->where('book_id', $request->book_id)
+                ->orderBy('created_at', 'desc')
+                ->first();
 
-            if($existingPermissions){
-                return redirect()->route('homepage')->with('error','Request Already exists');
+            if ($existingPermission) {
+                if ($existingPermission->status === 'accept') {
+                    if ($existingPermission->isExpired()) {
+                        return redirect()->route('book_detail', ['id' => $request->book_id])->with('error', 'Izin sudah kadaluarsa. Silakan ajukan permintaan baru.');
+                    } else {
+                        return redirect()->route('book_detail', ['id' => $request->book_id])->with('success', 'Anda sudah memiliki izin. Silakan membaca buku.');
+                    }
+                } elseif ($existingPermission->status === 'proces') {
+                    return redirect()->route('book_detail', ['id' => $request->book_id])->with('error', 'Permintaan sudah dalam proses. Harap tunggu.');
+                } elseif ($existingPermission->status === 'decline') {
+                    return redirect()->route('book_detail', ['id' => $request->book_id]);
+                }
             }
+
             permissions::create([
                 'user_id' => $user->id,
                 'book_id' => $request->book_id,
                 'status' => 'proces',
             ]);
-            return redirect()->route('homepage')->with('success','Request Submited');
-        }
-        return redirect()->route('login')->with('error','You need to be logged in to request');
 
+            return redirect()->route('homepage')->with('success', 'Permintaan izin telah diajukan.');
+        }
+
+        return redirect()->route('login')->with('error', 'Anda perlu login untuk mengajukan permintaan.');
     }
+
 
     public function viewPdf($id)
     {
@@ -162,10 +189,6 @@ class ReaderController extends Controller
 
     public function BookSuggestions() : View | RedirectResponse
     {
-        // if(!Auth::check()){
-        //     return redirect()->back()->with('error','Login to access book suggestions');
-        // }
-        // $mySuggestions = BookSuggestions::where('user_id',Auth::user()->id)->get();
         $mostLikedSuggestions = BookSuggestions::withCount('suggestionsLike')->orderBy('suggestions_like_count','desc')->get();
         return view('book_suggestions',compact('mostLikedSuggestions'));
     }
@@ -207,13 +230,21 @@ class ReaderController extends Controller
                 return redirect()->back()->with('error','Login to like suggestion');
             }
             $user_id = Auth::user()->id;
-            $existingUserBookSuggestLike = BookSuggestionsLike::with('bookSuggestions')->whereHas('bookSuggestions', function($query) use ($user_id){
-                $query->whereNot('user_id',$user_id);
-            })->whereNot('user_id',$user_id)->get();
+            $suggestions_id = $request->suggestions_id;
 
-            if($existingUserBookSuggestLike){
-                return redirect()->back()->with('error','you can`t like this');
+            $bookSuggestion = BookSuggestions::find($suggestions_id);
+            if(!$bookSuggestion){
+                return redirect()->back()->with('error','Book Suggest Not Found');
             }
+
+            if($bookSuggestion->user_id == $user_id){
+                return redirect()->back()->with('error','You cannot like your own suggestion');
+            }
+            $existingPermissions = BookSuggestionsLike::where('user_id',$user_id)->where('suggestions_id',$suggestions_id)->exists();
+            if($existingPermissions){
+                return redirect()->back()->with('error','You have already like for this suggestion');
+            }
+
             BookSuggestionsLike::create([
                 'user_id' => $user_id,
                 'suggestions_id' => $request->suggestions_id,

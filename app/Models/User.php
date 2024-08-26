@@ -65,7 +65,6 @@ class User extends Authenticatable
     {
         return $this->hasMany(permissions::class);
     }
-    // app/Models/User.php
     public function hasRole($role)
     {
         return $this->role === $role;

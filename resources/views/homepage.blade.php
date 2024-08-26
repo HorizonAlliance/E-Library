@@ -136,7 +136,9 @@
                             </div>
                         @endforelse
                     </div>
-                    {{ $books->links() }}
+                    <div class="d-flex justify-content-center">
+                        {{ $books->links('pagination::bootstrap-5') }}
+                    </div>
                 </div>
                 <!-- Blog list End -->
                 <!-- Sidebar End -->

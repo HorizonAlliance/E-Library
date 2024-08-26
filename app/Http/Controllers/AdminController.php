@@ -6,6 +6,7 @@ use App\Models\books;
 use App\Models\BookSuggestions;
 use App\Models\permissions;
 use App\Models\reviews;
+use App\Models\User;
 use Illuminate\Contracts\View\View;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
@@ -75,4 +76,10 @@ class AdminController extends Controller
         $reviews = reviews::where('book_id',$id)->get();
         return view('admin.books.reviews',compact('reviews'));
     }
+    public function updateMyProfile($id) : View
+    {
+        $user = User::findOrFail($id);
+        return view('admin.users.update_my_profile', compact('user'));
+    }
+
 }

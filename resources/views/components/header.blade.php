@@ -15,11 +15,12 @@
         </ul>
         <div class="navbar-collapse justify-content-end px-0" id="navbarNav">
             <ul class="navbar-nav flex-row ms-auto align-items-center justify-content-end">
-                <p class="btn btn-primary">Welcome, {{ $user->name }}</p>
+                <a href="{{route('homepage')}}"><p class="btn btn-outline-info m-2">Main Page</p></a>
+                <p class="text-primary fw-bold m-2">Welcome, {{ $user->name }}</p>
                 <li class="nav-item dropdown">
                     <a class="nav-link nav-icon-hover" href="javascript:void(0)" id="drop2"
                         data-bs-toggle="dropdown" aria-expanded="false">
-                        <img src="{{ asset('assets/images/profile/user-1.jpg') }}" alt="" width="35"
+                        <img src="{{ asset('storage/avatars/'.$user->avatar) }}" alt="" width="35"
                             height="35" class="rounded-circle">
                     </a>
                     <div class="dropdown-menu dropdown-menu-end dropdown-menu-animate-up" aria-labelledby="drop2">
@@ -38,9 +39,13 @@
                             </a>
                             <form method="POST" action="{{ route('logout') }}">
                                 @csrf
-                                <button type="submit" class="btn btn-outline-primary mx-3 mt-2 d-block">Logout</button>
+                                <button type="submit" class="btn btn-outline-danger mx-3 mt-2 d-block">Logout</button>
                             </form>
-
+                            <a href="{{route('updateMyProfile',$user->id)}}">
+                                <button type="button" class="btn btn-outline-primary mx-3 mt-2 d-block">
+                                    UpdateProfile
+                                </button>
+                            </a>
                         </div>
                     </div>
                 </li>

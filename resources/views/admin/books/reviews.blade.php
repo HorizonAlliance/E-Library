@@ -12,7 +12,10 @@
                         Date : {{$review->created_at}}
                     </div>
                     <div class="card-body">
-                      <h5 class="card-title text-warning">{{$review->rating}}</h5>
+                        <div class="d-flex">
+                            <i class="ti ti-star fs-4 text-warning"></i>
+                          <h5 class="card-title text-warning">{{$review->rating}}</h5>
+                        </div>
                       <p class="card-text">{{$review->ulasan}}</p>
                       {{-- <a href="#" class="btn btn-primary">See more</a> --}}
                     </div>

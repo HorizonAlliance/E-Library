@@ -28,39 +28,49 @@
                         </div>
                         <div class="col-sm-6 wow zoomIn" data-wow-delay="0.4s" style="visibility: visible; animation-delay: 0.4s; animation-name: zoomIn;">
                             <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Release : {{ date('Y:m:d',strtotime($book->release_date)) }}</h5>
-                            <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Read Duration : {{ $book->read_duration }}</h5>
+                            <h5 class="mb-3"><i class="fa fa-check text-primary me-3"></i>Read Duration : {{ $book->read_duration }} Days</h5>
                         </div>
                     </div>
                     @if ($permission)
+                    @if ($permission->isExpired())
+                        <label class="text-warning" for="">Your permission expired on {{$permission->expirated}}!</label>
+                        <form action="{{ route('request_book') }}" method="POST">
+                            @csrf
+                            <input type="hidden" name="book_id" value="{{ $book->id }}" required>
+                            <button class="btn btn-primary py-3 px-5 mt-3 wow zoomIn" type="submit">
+                                New Request
+                            </button>
+                        </form>
+                    @else
                         @if ($permission->status == 'proces')
                             <label class="btn btn-primary" for="">In Process</label>
                         @elseif($permission->status == 'accept')
-                        <button class="btn btn-primary" type="button" onclick="window.location.href='{{ route('viewPdf', ['id' => $permission->id]) }}'">
-                            Approved, ReadNow
-                        </button>
+                            <button class="btn btn-primary" type="button" onclick="window.location.href='{{ route('viewPdf', ['id' => $permission->id]) }}'">
+                                Approved, Read Now
+                            </button>
                         @elseif($permission->status == 'decline')
                             <label class="btn btn-danger" for="">Rejected</label>
-                        @elseif($permission->status == 'expirated')
-                            <label class="text-warning" for=""> Your permissions is expirired !</label>
                             <form action="{{ route('request_book') }}" method="POST">
                                 @csrf
                                 <input type="hidden" name="book_id" value="{{ $book->id }}" required>
                                 <button class="btn btn-primary py-3 px-5 mt-3 wow zoomIn" type="submit">
-                                    Request Permissions
+                                    New Request
                                 </button>
                             </form>
                         @else
-                            <label class="btn btn-info" for="">Unkn own Status</label>
+                            <label class="btn btn-info" for="">Unknown Status</label>
                         @endif
-                    @else
-                        <form action="{{ route('request_book') }}" method="POST">
-                            @csrf
-                            <input type="hidden" name="book_id" value="{{ $book->id }}" required>
-                            <button class="btn btn-primary  py-3 px-5 mt-3 wow zoomIn" type="submit">
-                                Request Permissions
-                            </button>
-                        </form>
                     @endif
+                @else
+                    <form action="{{ route('request_book') }}" method="POST">
+                        @csrf
+                        <input type="hidden" name="book_id" value="{{ $book->id }}" required>
+                        <button class="btn btn-primary py-3 px-5 mt-3 wow zoomIn" type="submit">
+                            Request Permission
+                        </button>
+                    </form>
+                @endif
+
                 </div>
                 <div class="col-lg-5" style="min-height: 500px;">
                     <div class="position-relative h-100">
@@ -87,28 +97,13 @@
                             </div>
                         </div>
                         @endforeach
-                        {{-- <div class="d-flex mb-4">
-                            <img src="img/user.jpg" class="img-fluid rounded" style="width: 45px; height: 45px;">
-                            <div class="ps-3">
-                                <h6><a href="">John Doe</a> <small><i>01 Jan 2045</i></small></h6>
-                                <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor labore
-                                    accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed eirmod</p>
-                                <button class="btn btn-sm btn-light">Reply</button>
-                            </div>
-                        </div> --}}
-                        {{-- <div class="d-flex ms-5 mb-4">
-                            <img src="img/user.jpg" class="img-fluid rounded" style="width: 45px; height: 45px;">
-                            <div class="ps-3">
-                                <h6><a href="">John Doe</a> <small><i>01 Jan 2045</i></small></h6>
-                                <p>Diam amet duo labore stet elitr invidunt ea clita ipsum voluptua, tempor labore
-                                    accusam ipsum et no at. Kasd diam tempor rebum magna dolores sed eirmod</p>
-                                <button class="btn btn-sm btn-light">Reply</button>
-                            </div>
-                        </div> --}}
+                    </div>
+                    <div class="d-flex justify-content-center">
+                        {{ $reviews->links('pagination::bootstrap-5') }}
                     </div>
                     <!-- Comment List End -->
                     @auth
-                    @if ($permission)
+                    @if ($permission ? $permission->status == 'accept' : '')
                         <!-- Comment Form Start -->
                         <div class="bg-light rounded p-5">
                             <div class="section-title section-title-sm position-relative pb-3 mb-4">

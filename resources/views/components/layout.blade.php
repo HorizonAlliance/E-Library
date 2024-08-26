@@ -7,6 +7,12 @@
   <title>{{ $title }}</title>
   <link rel="shortcut icon" type="image/png" href="{{ asset('assets/images/logos/favicon.png') }}" />
   <link rel="stylesheet" href="{{ asset('assets/css/styles.min.css') }}" />
+  <link rel="stylesheet" href="{{ asset('assets/css/bootstrap.css')}}">
+
+    <link rel="stylesheet" href="{{asset('assets/vendors/toastify/toastify.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/css/app.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/vendors/perfect-scrollbar/perfect-scrollbar.css')}}">
+    <link rel="stylesheet" href="{{asset('assets/vendors/bootstrap-icons/bootstrap-icons.css')}}">
 </head>
 
 <body>
@@ -23,7 +29,7 @@
       <!--  Header End -->
       <div class="container-fluid">
         <!--  Row 1 -->
-        {{ $slot }} 
+        {{ $slot }}
         <div class="py-6 px-6 text-center">
           <p class="mb-0 fs-4">Design and Developed by <a href="https://adminmart.com/" target="_blank" class="pe-1 text-primary text-decoration-underline">AdminMart.com</a> Distributed by <a href="https://themewagon.com">ThemeWagon</a></p>
         </div>
